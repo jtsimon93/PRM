@@ -23,26 +23,19 @@
 #include <memory>
 #include <filesystem>
 #include "contact.h"
-#include "contact_repository.h"
-#include "contact_service.h"
+#include "icontact_repository.h"
+#include "icontact_service.h"
 #include "utility.h"
+#include "singleton_injector.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    // Get the home directory and create the PRM directory if it doesn't exist
-    std::string homeDir = getHomeDirectory();
-    std::string prmDir = homeDir + "/.PRM";
-    if (!std::filesystem::exists(prmDir)) {
-        std::filesystem::create_directory(prmDir);
-    }
+    // Get the DI injector instance
+    auto& injector = SingletonInjector::getInjector();
 
-    // Database path
-    std::string dbPath = prmDir + "/prm.db";
-
-    // Create the repository and service
-    auto contactRepository = std::make_shared<ContactRepository>(dbPath);
-    ContactService contactService(contactRepository);
+    // Resolve services
+    auto contactService = injector.create<std::shared_ptr<IContactService>>();
 
     // Set up the UI
     QWidget window;
@@ -50,7 +43,6 @@ int main(int argc, char *argv[]) {
 
     QLabel *title = new QLabel("PRM");
     layout->addWidget(title);
-
 
     window.setLayout(layout);
     window.resize(400, 300);

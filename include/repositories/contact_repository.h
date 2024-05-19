@@ -1,6 +1,7 @@
 #ifndef PRM_CONTACT_REPOSITORY_H
 #define PRM_CONTACT_REPOSITORY_H
 
+#include "icontact_repository.h"
 #include "contact.h"
 #include <vector>
 #include <sqlite_modern_cpp.h>
@@ -10,15 +11,15 @@
 #include <stdexcept>
 #include <ctime>
 
-class ContactRepository {
+class ContactRepository : public IContactRepository {
 public:
     ContactRepository(const std::string& db_path);
 
-    void add(const Contact& contact);
-    std::vector<Contact> getAll();
-    Contact getById(int id);
-    void update(const Contact& contact);
-    void remove(int id);
+    void add(const Contact& contact) override;
+    std::vector<Contact> getAll() override;
+    Contact getById(int id) override;
+    void update(const Contact& contact) override;
+    void remove(int id) override;
 
 private:
     std::shared_ptr<sqlite::database> db;
