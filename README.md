@@ -24,4 +24,14 @@ PRM is licensed under the GNU General Public License v3.0. You can view the lice
 PRM is built using the Qt framework. You can download the Qt framework [here](https://www.qt.io/download).
 
 ### Building
-To build PRM, you will need to have the Qt framework installed. You can download the Qt framework [here](https://www.qt.io/download). You will need to set an environment variable called Qt6_DIR to your Cmake path.
+To build PRM, you will need to have the Qt framework installed. You can download the Qt framework [here](https://www.qt.io/download).
+
+#### Prerequisites
+
+- CMake 3.28 or higher
+- vcpkg (for dependency management)
+- Qt 6.7.0
+- Install sqlite-modern-cpp using vcpkg
+- Install sqlite3 using vcpkg
+- Set `CMAKE_TOOLCHAIN_FILE` to the vcpkg toolchain file
+- Set `CMAKE_PREFIX_PATH` to the Qt installation directory

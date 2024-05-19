@@ -6,14 +6,21 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# Check if Qt6_DIR is set, otherwise fall back to default
-if(NOT DEFINED Qt6_DIR)
-    message(FATAL_ERROR "Qt6_DIR is not set. Please set Qt6_DIR to the Qt6 installation path.")
+# Use vcpkg toolchain file if VCPKG_ROOT is defined
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 endif()
 
-list(APPEND CMAKE_PREFIX_PATH "${Qt6_DIR}")
-
+# Find Qt and sqlite3 packages
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
+find_path(SQLITE_MODERN_CPP_INCLUDE_DIRS "sqlite_modern_cpp.h")
 
+# Add the executable
 add_executable(PRM main.cpp)
-target_link_libraries(PRM Qt6::Core Qt6::Gui Qt6::Widgets)
+
+# Include directories
+target_include_directories(PRM PRIVATE ${SQLITE_MODERN_CPP_INCLUDE_DIRS})
+
+# Link the Qt and sqlite3 libraries
+target_link_libraries(PRM Qt6::Core Qt6::Gui Qt6::Widgets unofficial::sqlite3::sqlite3)
