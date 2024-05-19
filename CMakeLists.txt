@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 project(PRM)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
 
 # Use vcpkg toolchain file if VCPKG_ROOT is defined
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -15,6 +15,15 @@ endif()
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
 find_path(SQLITE_MODERN_CPP_INCLUDE_DIRS "sqlite_modern_cpp.h")
+
+# Fetch Boost.DI
+include(FetchContent)
+FetchContent_Declare(
+        boost_di
+        GIT_REPOSITORY https://github.com/boost-ext/di.git
+        GIT_TAG cpp14
+)
+FetchContent_MakeAvailable(boost_di)
 
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -46,3 +55,6 @@ add_executable(PRM ${PRM_SOURCES} ${PRM_HEADERS})
 
 # Link the Qt and sqlite3 libraries
 target_link_libraries(PRM Qt6::Core Qt6::Gui Qt6::Widgets unofficial::sqlite3::sqlite3)
+
+# Ensure Boost.DI is available
+target_include_directories(PRM PRIVATE ${boost_di_SOURCE_DIR}/include)
