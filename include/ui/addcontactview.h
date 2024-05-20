@@ -2,6 +2,7 @@
 #define ADDCONTACTVIEW_H
 
 #include "baseview.h"
+#include "icontact_service.h"
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -16,6 +17,12 @@ public:
     explicit AddContactView(QWidget *parent = nullptr);
     ~AddContactView();
 
+private slots:
+    void onSubmitButtonClicked();
+
+signals:
+    void contactAdded();
+
 private:
     void setupUi();
 
@@ -28,6 +35,8 @@ private:
     QDateEdit *birthDateEdit;
     QPushButton *submitButton;
     QFormLayout *formLayout;
+
+    std::shared_ptr<IContactService> contactService;
 };
 
 #endif //  ADDCONTACTVIEW_H

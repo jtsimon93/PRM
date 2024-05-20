@@ -1,10 +1,11 @@
 #include "ui/addcontactview.h"
 #include "services/contact_service.h"
+#include "singleton_injector.h"
 #include <QHeaderView>
 #include <QDate>
 
 AddContactView::AddContactView(QWidget *parent)
-        : BaseView(parent) {
+        : BaseView(parent), contactService(SingletonInjector::getInjector().create<std::shared_ptr<IContactService>>()) {
     setupUi();
 }
 
@@ -32,7 +33,7 @@ void AddContactView::setupUi() {
     birthDateEdit = new QDateEdit(this);
     birthDateEdit->setCalendarPopup(true);
     birthDateEdit->setDateRange(QDate(1900, 1, 1), QDate::currentDate());
-    birthDateEdit->setDisplayFormat("yyyy-MM-dd");
+    birthDateEdit->setDisplayFormat("MM-dd-yyyy");
 
     // Create QPushButton for the submit button
     submitButton = new QPushButton(tr("Submit"), this);
@@ -53,5 +54,31 @@ void AddContactView::setupUi() {
 
     setLayout(layout);
 
+    // Connect the button click signal to the slot
+    connect(submitButton, &QPushButton::clicked, this, &AddContactView::onSubmitButtonClicked);
+
     qInfo("AddContactView UI setup complete");
+}
+
+void AddContactView::onSubmitButtonClicked() {
+    Contact contact;
+    contact.firstName = firstNameLineEdit->text().toStdString();
+    contact.lastName = lastNameLineEdit->text().toStdString();
+    contact.middleName = middleNameLineEdit->text().toStdString();
+    contact.nickName = nickNameLineEdit->text().toStdString();
+    contact.relationship = relationshipLineEdit->text().toStdString();
+
+    // Convert QDate to std::tm
+    QDate birthDate = birthDateEdit->date();
+    std::tm tm = {};
+    tm.tm_year = birthDate.year() - 1900;  // years since 1900
+    tm.tm_mon = birthDate.month() - 1;     // months since January [0-11]
+    tm.tm_mday = birthDate.day();          // day of the month [1-31]
+
+    contact.birthDate = tm;
+
+    contactService->addContact(contact);
+
+    // Direct the user to the contact list view
+    emit contactAdded();
 }
