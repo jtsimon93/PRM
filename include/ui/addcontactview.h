@@ -4,19 +4,28 @@
 #include "baseview.h"
 #include <QLabel>
 #include <QVBoxLayout>
-#include <QTableWidget> // Include QTableWidget
+#include <QLineEdit>
+#include <QDateEdit>
+#include <QPushButton>
 
 class AddContactView : public BaseView {
 Q_OBJECT
 
 public:
-    AddContactView(QWidget *parent = nullptr);
+    explicit AddContactView(QWidget *parent = nullptr);
     ~AddContactView();
 
 private:
     void setupUi();
 
     QLabel *titleLabel;
+    QLineEdit *firstNameLineEdit;
+    QLineEdit *lastNameLineEdit;
+    QLineEdit *middleNameLineEdit;
+    QLineEdit *nickNameLineEdit;
+    QLineEdit *relationshipLineEdit;
+    QDateEdit *birthDateEdit;
+    QPushButton *submitButton;
 };
 
 #endif //  ADDCONTACTVIEW_H
