@@ -77,7 +77,9 @@ void AddContactView::onSubmitButtonClicked() {
 
     contact.birthDate = tm;
 
-    contactService->addContact(contact);
+    int insertedContactId = 0;
+    insertedContactId = contactService->addContact(contact);
+    qInfo("Contact added with ID: %d", insertedContactId);
 
     // Clear the form fields
     firstNameLineEdit->clear();

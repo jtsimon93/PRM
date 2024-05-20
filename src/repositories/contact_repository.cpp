@@ -20,8 +20,7 @@ ContactRepository::ContactRepository(const std::string& db_path) {
     std::cout << "Database opened." << std::endl;
 }
 
-void ContactRepository::add(const Contact& contact) {
-    std::cout << "Adding contact: " << contact.firstName << " " << contact.lastName << std::endl;
+int ContactRepository::add(const Contact& contact) {
     *db << R"(INSERT INTO contacts
               (firstName, lastName, middleName, nickName, relationship, birthDate, createdAt, updatedAt)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?);)"
@@ -33,6 +32,9 @@ void ContactRepository::add(const Contact& contact) {
         << formatDate(contact.birthDate)
         << contact.createdAt
         << contact.updatedAt;
+
+    int insertedId = db->last_insert_rowid();
+    return insertedId;
 }
 
 std::vector<Contact> ContactRepository::getAll() {
