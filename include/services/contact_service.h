@@ -10,7 +10,7 @@ class ContactService : public IContactService {
 public:
     explicit ContactService(std::shared_ptr<IContactRepository> repository);
 
-    void addContact(const Contact& contact) override;
+    int addContact(const Contact& contact) override;
     std::vector<Contact> getAllContacts() override;
     Contact getContactById(int id) override;
     void updateContact(const Contact& contact) override;

@@ -6,9 +6,9 @@ ContactService::ContactService(std::shared_ptr<IContactRepository> repository)
     std::cout << "ContactService created" << std::endl;
 }
 
-void ContactService::addContact(const Contact& contact) {
+int ContactService::addContact(const Contact& contact) {
     std::cout << "Adding contact: " << contact.firstName << " " << contact.lastName << std::endl;
-    repository->add(contact);
+    return repository->add(contact);
 }
 
 std::vector<Contact> ContactService::getAllContacts() {

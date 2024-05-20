@@ -15,7 +15,7 @@ class ContactRepository : public IContactRepository {
 public:
     ContactRepository(const std::string& db_path);
 
-    void add(const Contact& contact) override;
+    int add(const Contact& contact) override;
     std::vector<Contact> getAll() override;
     Contact getById(int id) override;
     void update(const Contact& contact) override;

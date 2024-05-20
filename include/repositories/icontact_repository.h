@@ -8,7 +8,7 @@ class IContactRepository {
 public:
     virtual ~IContactRepository() = default;
 
-    virtual void add(const Contact& contact) = 0;
+    virtual int add(const Contact& contact) = 0;
     virtual std::vector<Contact> getAll() = 0;
     virtual Contact getById(int id) = 0;
     virtual void update(const Contact& contact) = 0;
