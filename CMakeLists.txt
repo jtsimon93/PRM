@@ -38,6 +38,7 @@ file(GLOB_RECURSE PRM_HEADERS
         ${CMAKE_SOURCE_DIR}/include/models/*.h
         ${CMAKE_SOURCE_DIR}/include/repositories/*.h
         ${CMAKE_SOURCE_DIR}/include/services/*.h
+        ${CMAKE_SOURCE_DIR}/include/ui/*.h
 )
 
 file(GLOB_RECURSE PRM_SOURCES
@@ -45,6 +46,7 @@ file(GLOB_RECURSE PRM_SOURCES
         ${CMAKE_SOURCE_DIR}/src/models/*.cpp
         ${CMAKE_SOURCE_DIR}/src/repositories/*.cpp
         ${CMAKE_SOURCE_DIR}/src/services/*.cpp
+        ${CMAKE_SOURCE_DIR}/src/ui/*.cpp
 )
 
 # Manually add main.cpp from the root directory

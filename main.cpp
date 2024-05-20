@@ -16,36 +16,21 @@
  */
 
 #include <QApplication>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QWidget>
-#include <QLabel>
-#include <memory>
-#include <filesystem>
-#include "contact.h"
-#include "icontact_repository.h"
-#include "icontact_service.h"
-#include "utility.h"
+#include "ui/mainwindow.h"
 #include "singleton_injector.h"
 
 int main(int argc, char *argv[]) {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
     // Get the DI injector instance
-    auto& injector = SingletonInjector::getInjector();
+    auto &injector = SingletonInjector::getInjector();
 
     // Resolve services
     auto contactService = injector.create<std::shared_ptr<IContactService>>();
 
     // Set up the UI
-    QWidget window;
-    QVBoxLayout *layout = new QVBoxLayout(&window);
+    MainWindow window;
 
-    QLabel *title = new QLabel("PRM");
-    layout->addWidget(title);
-
-    window.setLayout(layout);
-    window.resize(400, 300);
     window.show();
 
     return QApplication::exec();
