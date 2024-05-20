@@ -79,6 +79,14 @@ void AddContactView::onSubmitButtonClicked() {
 
     contactService->addContact(contact);
 
+    // Clear the form fields
+    firstNameLineEdit->clear();
+    lastNameLineEdit->clear();
+    middleNameLineEdit->clear();
+    nickNameLineEdit->clear();
+    relationshipLineEdit->clear();
+    birthDateEdit->setDate(QDate::currentDate());
+
     // Direct the user to the contact list view
     emit contactAdded();
 }
