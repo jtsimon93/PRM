@@ -26,31 +26,21 @@ MainWindow::~MainWindow() {
 
 void MainWindow::showView(QWidget *widget) {
     if (widget) {
-        QWidget *newWidget;
-        if (widget == contactListView) {
-            newWidget = new ContactListView(this);
-        } else if (widget == addContactView) {
-            newWidget = new AddContactView(this);
-        } else {
-            qWarning("Received an unexpected QWidget pointer");
-            return;
-        }
-
         // Check if the widget is already in the splitter
         if(splitter->count() > 0 && splitter->widget(0) == widget) {
             // The widget is already being shown, so do nothing
             qInfo("mainwindow.cpp: the widget is already being shown");
-            delete newWidget;
             return;
         }
         // Remove the current widget from the splitter
         if (splitter->count() > 0) {
             QWidget *currentWidget = splitter->widget(0);
-            splitter->replaceWidget(0, newWidget);
-            currentWidget->deleteLater();
+            splitter->replaceWidget(0, widget);
+            currentWidget->hide();
         } else {
-            splitter->addWidget(newWidget);
+            splitter->addWidget(widget);
         }
+        widget->show();
     } else {
         // Handle the case where the QWidget pointer is null
         qWarning("Received a null QWidget pointer");
