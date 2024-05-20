@@ -24,6 +24,7 @@ void ContactListView::setupUi() {
     tableWidget->setColumnCount(6);
     tableWidget->setHorizontalHeaderLabels(QStringList() << tr("First Name") << tr("Last Name") << tr("Middle Name") << tr("Nick Name") << tr("Birth Day") << tr("Relationship"));
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
