@@ -12,6 +12,9 @@ Q_OBJECT
 public:
     ContactListView(QWidget *parent = nullptr);
 
+public slots:
+    void refreshData();
+
 private:
     void setupUi();
     void populateTable(); // Declare populateTable method

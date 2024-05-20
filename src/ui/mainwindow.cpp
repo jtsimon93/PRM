@@ -3,16 +3,21 @@
 
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent) {
-    createActions();
     setupUi();
+    createActions();
     createMenus();
 
-    contactListView = new ContactListView(this);
-    splitter->addWidget(contactListView);
+    contactListView = new ContactListView(nullptr);
+    addContactView = new AddContactView(nullptr);
+
+    // Set the initial view
+    showView(contactListView);
 
     // Connect to the signals of the child widgets
-    connect(contactAction, &QAction::triggered, [this]() { showView(contactListView ); });
-
+    connect(contactAction, &QAction::triggered, [this]() { showView(contactListView); });
+    connect(addContactAction, &QAction::triggered, [this]() { showView(addContactView);});
+    connect(addContactView, &AddContactView::contactAdded, [this]() { showView(contactListView); });
+    connect(this, &MainWindow::switchedToContactListView, [this]() { contactListView->refreshData(); });
 
 }
 
@@ -25,18 +30,23 @@ void MainWindow::showView(QWidget *widget) {
         // Check if the widget is already in the splitter
         if(splitter->count() > 0 && splitter->widget(0) == widget) {
             // The widget is already being shown, so do nothing
-            std::cout << "mainwindow.cpp: the widget is already being shown\n";
-
+            qInfo("mainwindow.cpp: the widget is already being shown");
             return;
         }
+
+        if(widget == contactListView) {
+            emit switchedToContactListView(); // emit signal so view can refresh
+        }
+
         // Remove the current widget from the splitter
         if (splitter->count() > 0) {
             QWidget *currentWidget = splitter->widget(0);
             splitter->replaceWidget(0, widget);
-            currentWidget->deleteLater();
+            currentWidget->hide();
         } else {
             splitter->addWidget(widget);
         }
+        widget->show();
     } else {
         // Handle the case where the QWidget pointer is null
         qWarning("Received a null QWidget pointer");
@@ -44,8 +54,6 @@ void MainWindow::showView(QWidget *widget) {
 }
 
 void MainWindow::setupUi() {
-    menuBar = new QMenuBar(this);
-    setMenuBar(menuBar);
 
     statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
@@ -65,12 +73,6 @@ void MainWindow::setupUi() {
     // Configure Status Bar
     statusBar->showMessage(tr("Welcome."));
 
-    // Configure Tool Bar
-    toolBar->setMovable(false);
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolBar->addAction(contactAction);
-    toolBar->addAction(addContactAction);
-
 }
 
 void MainWindow::createActions() {
@@ -81,9 +83,16 @@ void MainWindow::createActions() {
 }
 
 void MainWindow::createMenus() {
-    fileMenu = menuBar->addMenu(tr("&File"));
+    // Configure Main Menu
+    fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAction);
 
-    helpMenu = menuBar->addMenu(tr("&Help"));
+    helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAction);
+
+    // Configure Tool Bar Menu
+    toolBar->setMovable(false);
+    toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolBar->addAction(contactAction);
+    toolBar->addAction(addContactAction);
 }

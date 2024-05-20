@@ -7,6 +7,7 @@
 #include <QToolBar>
 #include <QSplitter>
 #include "contactlistview.h"
+#include "addcontactview.h"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -18,16 +19,19 @@ public:
 private slots:
     void showView(QWidget *widget);
 
+signals:
+    void switchedToContactListView();
+
 private:
     void setupUi();
     void createActions();
     void createMenus();
 
-    QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
     QSplitter *splitter;
     ContactListView *contactListView;
+    AddContactView *addContactView;
 
     QMenu *fileMenu;
     QMenu *helpMenu;
