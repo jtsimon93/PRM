@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QDateEdit>
 #include <QPushButton>
+#include <QFormLayout>
 
 class AddContactView : public BaseView {
 Q_OBJECT
@@ -26,6 +27,7 @@ private:
     QLineEdit *relationshipLineEdit;
     QDateEdit *birthDateEdit;
     QPushButton *submitButton;
+    QFormLayout *formLayout;
 };
 
 #endif //  ADDCONTACTVIEW_H

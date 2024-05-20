@@ -32,26 +32,24 @@ void AddContactView::setupUi() {
     birthDateEdit = new QDateEdit(this);
     birthDateEdit->setCalendarPopup(true);
     birthDateEdit->setDateRange(QDate(1900, 1, 1), QDate::currentDate());
-    birthDateEdit->setDisplayFormat("MM/dd/yyyy");
+    birthDateEdit->setDisplayFormat("yyyy-MM-dd");
 
     // Create QPushButton for the submit button
     submitButton = new QPushButton(tr("Submit"), this);
 
+    formLayout = new QFormLayout();
+    formLayout->addRow(new QLabel(tr("First Name:"), this), firstNameLineEdit);
+    formLayout->addRow(new QLabel(tr("Last Name:"), this), lastNameLineEdit);
+    formLayout->addRow(new QLabel(tr("Middle Name:"), this), middleNameLineEdit);
+    formLayout->addRow(new QLabel(tr("Nick Name:"), this), nickNameLineEdit);
+    formLayout->addRow(new QLabel(tr("Relationship:"), this), relationshipLineEdit);
+    formLayout->addRow(new QLabel(tr("Birth Date:"), this), birthDateEdit);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
-    layout->addWidget(new QLabel(tr("First Name:"), this));
-    layout->addWidget(firstNameLineEdit);
-    layout->addWidget(new QLabel(tr("Last Name:"), this));
-    layout->addWidget(lastNameLineEdit);
-    layout->addWidget(new QLabel(tr("Middle Name:"), this));
-    layout->addWidget(middleNameLineEdit);
-    layout->addWidget(new QLabel(tr("Nick Name:"), this));
-    layout->addWidget(nickNameLineEdit);
-    layout->addWidget(new QLabel(tr("Relationship:"), this));
-    layout->addWidget(relationshipLineEdit);
-    layout->addWidget(new QLabel(tr("Birth Date:"), this));
-    layout->addWidget(birthDateEdit);
+    layout->addLayout(formLayout);
     layout->addWidget(submitButton);
+    layout->addStretch(1); // Add stretch to push the form to the top
 
     setLayout(layout);
 
