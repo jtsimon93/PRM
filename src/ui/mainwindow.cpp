@@ -12,8 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect to the signals of the child widgets
     connect(contactListView, &ContactListView::switchView, this, &MainWindow::showView);
 
-    // Set minimum size for the main window
-    setMinimumSize(800, 600);
+
 }
 
 MainWindow::~MainWindow() {
@@ -48,6 +47,13 @@ void MainWindow::setupUi() {
 
     splitter = new QSplitter(this);
     setCentralWidget(splitter);
+
+    // Set minimum size for the main window
+    setMinimumSize(800, 600);
+
+    splitter->setStyleSheet("background-color: #ffffff;");
+
+    statusBar->showMessage(tr("Welcome."));
 }
 
 void MainWindow::createActions() {
