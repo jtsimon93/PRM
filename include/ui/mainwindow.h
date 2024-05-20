@@ -33,6 +33,8 @@ private:
     QMenu *helpMenu;
     QAction *exitAction;
     QAction *aboutAction;
+    QAction *contactAction;
+    QAction *addContactAction;
 };
 
 #endif // MAINWINDOW_H
