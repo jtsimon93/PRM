@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(contactAction, &QAction::triggered, [this]() { showView(contactListView); });
     connect(addContactAction, &QAction::triggered, [this]() { showView(addContactView);});
     connect(addContactView, &AddContactView::contactAdded, [this]() { showView(contactListView); });
+    connect(this, &MainWindow::switchedToContactListView, [this]() { contactListView->refreshData(); });
 
 }
 
@@ -32,6 +33,11 @@ void MainWindow::showView(QWidget *widget) {
             qInfo("mainwindow.cpp: the widget is already being shown");
             return;
         }
+
+        if(widget == contactListView) {
+            emit switchedToContactListView(); // emit signal so view can refresh
+        }
+
         // Remove the current widget from the splitter
         if (splitter->count() > 0) {
             QWidget *currentWidget = splitter->widget(0);

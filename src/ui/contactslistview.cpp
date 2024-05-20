@@ -53,5 +53,13 @@ void ContactListView::populateTable() {
         QDate birthDate = QDate(contact.birthDate.tm_year + 1900, contact.birthDate.tm_mon + 1, contact.birthDate.tm_mday);
         tableWidget->setItem(row, 4, new QTableWidgetItem(birthDate.toString("yyyy-MM-dd")));
     }
+}
 
+void ContactListView::refreshData() {
+    // Clear the table
+    tableWidget->clearContents();
+    tableWidget->setRowCount(0);
+
+    // Repopulate the table
+    populateTable();
 }

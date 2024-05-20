@@ -19,6 +19,9 @@ public:
 private slots:
     void showView(QWidget *widget);
 
+signals:
+    void switchedToContactListView();
+
 private:
     void setupUi();
     void createActions();
