@@ -20,12 +20,19 @@ private slots:
 
 private:
     void setupUi();
+    void createActions();
+    void createMenus();
 
     QMenuBar *menuBar;
     QStatusBar *statusBar;
     QToolBar *toolBar;
     QSplitter *splitter;
     ContactListView *contactListView;
+
+    QMenu *fileMenu;
+    QMenu *helpMenu;
+    QAction *exitAction;
+    QAction *aboutAction;
 };
 
 #endif // MAINWINDOW_H

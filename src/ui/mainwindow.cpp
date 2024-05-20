@@ -3,10 +3,17 @@
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent) {
     setupUi();
+    createActions();
+    createMenus();
+
+    contactListView = new ContactListView(this);
+    splitter->addWidget(contactListView);
 
     // Connect to the signals of the child widgets
     connect(contactListView, &ContactListView::switchView, this, &MainWindow::showView);
 
+    // Set minimum size for the main window
+    setMinimumSize(800, 600);
 }
 
 MainWindow::~MainWindow() {
@@ -41,7 +48,17 @@ void MainWindow::setupUi() {
 
     splitter = new QSplitter(this);
     setCentralWidget(splitter);
+}
 
-    contactListView = new ContactListView(this);
-    splitter->addWidget(contactListView);
+void MainWindow::createActions() {
+    exitAction = new QAction(tr("&Exit"), this);
+    aboutAction = new QAction(tr("&About"), this);
+}
+
+void MainWindow::createMenus() {
+    fileMenu = menuBar->addMenu(tr("&File"));
+    fileMenu->addAction(exitAction);
+
+    helpMenu = menuBar->addMenu(tr("&Help"));
+    helpMenu->addAction(aboutAction);
 }
