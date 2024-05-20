@@ -12,13 +12,14 @@ ContactListView::ContactListView(QWidget *parent)
 }
 
 void ContactListView::setupUi() {
-    titleLabel = new QLabel("Contacts", this);
-    titleLabel->setAlignment(Qt::AlignCenter); // Center align the text
+    titleLabel = new QLabel(tr("Contacts"), this);
+    titleLabel->setAlignment(Qt::AlignLeft);
 
     // Create a QTableWidget
     tableWidget = new QTableWidget(this);
     tableWidget->setColumnCount(6);
     tableWidget->setHorizontalHeaderLabels(QStringList() << "First Name" << "Last Name" << "Middle Name" << "Nick Name" << "Birth Day" << "Relationship");
+    tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
@@ -48,6 +49,4 @@ void ContactListView::populateTable() {
         tableWidget->setItem(row, 4, new QTableWidgetItem(birthDate.toString("yyyy-MM-dd")));
     }
 
-    // Resize the columns to fit the content
-    tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
