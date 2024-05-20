@@ -15,10 +15,14 @@ void ContactListView::setupUi() {
     titleLabel = new QLabel(tr("Contacts"), this);
     titleLabel->setAlignment(Qt::AlignLeft);
 
+    QFont titleFont = titleLabel->font();
+    titleFont.setPointSize(16);
+    titleLabel->setFont(titleFont);
+
     // Create a QTableWidget
     tableWidget = new QTableWidget(this);
     tableWidget->setColumnCount(6);
-    tableWidget->setHorizontalHeaderLabels(QStringList() << "First Name" << "Last Name" << "Middle Name" << "Nick Name" << "Birth Day" << "Relationship");
+    tableWidget->setHorizontalHeaderLabels(QStringList() << tr("First Name") << tr("Last Name") << tr("Middle Name") << tr("Nick Name") << tr("Birth Day") << tr("Relationship"));
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
