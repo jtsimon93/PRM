@@ -24,7 +24,7 @@ void ViewContactView::setupUi() {
     QLabel *firstNameLabel = new QLabel(QString::fromStdString(contact.firstName), this);
     QLabel *lastNameLabel = new QLabel(QString::fromStdString(contact.lastName), this);
     QLabel *middleNameLabel = new QLabel(QString::fromStdString(contact.middleName ? contact.middleName.value() : ""), this);
-    QLabel *nickNameLabel = new QLabel(QString::fromStdString(contact.nickName ? contact.middleName.value() : ""), this);
+    QLabel *nickNameLabel = new QLabel(QString::fromStdString(contact.nickName ? contact.nickName.value() : ""), this);
     QLabel *relationshipLabel = new QLabel(QString::fromStdString(contact.relationship ? contact.relationship.value() : ""), this);
 
     // Handle birthdate
