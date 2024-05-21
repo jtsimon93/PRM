@@ -10,13 +10,15 @@ class ViewContactView : public BaseView {
 Q_OBJECT
 
 public:
-    explicit ViewContactView(QWidget *parent = nullptr);
+    explicit ViewContactView(int contactId, QWidget *parent = nullptr);
 
 
 private:
     void setupUi();
 
     QLabel *titleLabel;
+    int contactId;
+
 
     std::shared_ptr<IContactService> contactService;
 };
