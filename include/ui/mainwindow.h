@@ -8,6 +8,7 @@
 #include <QSplitter>
 #include "contactlistview.h"
 #include "addcontactview.h"
+#include "viewcontactview.h"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -32,6 +33,7 @@ private:
     QSplitter *splitter;
     ContactListView *contactListView;
     AddContactView *addContactView;
+    ViewContactView *viewContactView;
 
     QMenu *fileMenu;
     QMenu *helpMenu;

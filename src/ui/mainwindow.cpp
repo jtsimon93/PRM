@@ -16,9 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect to the signals of the child widgets
     connect(contactAction, &QAction::triggered, [this]() { showView(contactListView); });
     connect(addContactAction, &QAction::triggered, [this]() { showView(addContactView);});
-    connect(addContactView, &AddContactView::contactAdded, [this]() { showView(contactListView); });
     connect(this, &MainWindow::switchedToContactListView, [this]() { contactListView->refreshData(); });
-
+    connect(addContactView, &AddContactView::contactAdded, [this](int contactId) {
+        viewContactView = new ViewContactView(contactId, nullptr);
+        showView(viewContactView);
+    });
 }
 
 MainWindow::~MainWindow() {

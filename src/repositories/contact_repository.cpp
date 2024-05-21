@@ -29,7 +29,7 @@ int ContactRepository::add(const Contact& contact) {
         << contact.middleName
         << contact.nickName
         << contact.relationship
-        << formatDate(contact.birthDate)
+        << (contact.birthDate ? formatDate(*contact.birthDate) : nullptr)
         << contact.createdAt
         << contact.updatedAt;
 
@@ -77,7 +77,7 @@ void ContactRepository::update(const Contact& contact) {
         << contact.middleName
         << contact.nickName
         << contact.relationship
-        << formatDate(contact.birthDate)
+        << (contact.birthDate ? formatDate(contact.birthDate) : nullptr)
         << contact.createdAt
         << contact.updatedAt
         << contact.id;
@@ -88,14 +88,22 @@ void ContactRepository::remove(int id) {
     *db << "DELETE FROM contacts WHERE id = ?;" << id;
     std::cout << "Contact removed." << std::endl;
 }
-
-std::string ContactRepository::formatDate(const std::tm& tm) {
-    char buf[80];
-    std::strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
-    return std::string(buf);
+std::string ContactRepository::formatDate(const std::optional<std::tm>& opt_tm) {
+    if (opt_tm.has_value()) {
+        char buf[80];
+        std::strftime(buf, sizeof(buf), "%Y-%m-%d", &(*opt_tm));
+        return std::string(buf);
+    } else {
+        return "";
+    }
 }
 
 std::tm ContactRepository::parseDate(const std::string& date) {
+    // If the date is null in the DB, return an empty tm struct
+    if (date.empty()) {
+        return {};
+    }
+
     std::tm tm = {};
     char* result = strptime(date.c_str(), "%Y-%m-%d", &tm);
     if (result == nullptr) {

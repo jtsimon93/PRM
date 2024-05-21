@@ -21,7 +21,7 @@ private slots:
     void onSubmitButtonClicked();
 
 signals:
-    void contactAdded();
+    void contactAdded(int contactId);
 
 private:
     void setupUi();

@@ -24,7 +24,7 @@ public:
 private:
     std::shared_ptr<sqlite::database> db;
 
-    std::string formatDate(const std::tm& tm);
+    std::string formatDate(const std::optional<std::tm>& tm);
     std::tm parseDate(const std::string& date);
 };
 

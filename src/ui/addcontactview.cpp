@@ -90,5 +90,5 @@ void AddContactView::onSubmitButtonClicked() {
     birthDateEdit->setDate(QDate::currentDate());
 
     // Direct the user to the contact list view
-    emit contactAdded();
+    emit contactAdded(insertedContactId);
 }
