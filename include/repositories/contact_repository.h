@@ -25,7 +25,7 @@ private:
     std::shared_ptr<sqlite::database> db;
 
     std::string formatDate(const std::optional<std::tm>& tm);
-    std::tm parseDate(const std::string& date);
+    std::optional<std::tm> parseDate(const std::string& date);
 };
 
 #endif // PRM_CONTACT_REPOSITORY_H

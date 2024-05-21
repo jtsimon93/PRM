@@ -9,7 +9,7 @@ Contact::Contact()
 }
 
 Contact::Contact(int id, const std::string& firstName, const std::string& lastName, const std::string& middleName,
-                 const std::string& nickName, const std::string& relationship, const std::tm& birthDate,
+                 const std::string& nickName, const std::string& relationship, const std::optional<std::tm>& birthDate,
                  std::time_t createdAt, std::time_t updatedAt)
         : id(id), firstName(firstName), lastName(lastName), middleName(middleName), nickName(nickName),
           relationship(relationship), birthDate(birthDate), createdAt(createdAt), updatedAt(updatedAt)
