@@ -45,13 +45,20 @@ void ContactListView::populateTable() {
         tableWidget->insertRow(row);
         tableWidget->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(contact.firstName)));
         tableWidget->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(contact.lastName)));
-        tableWidget->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(contact.middleName)));
-        tableWidget->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(contact.nickName)));
-        tableWidget->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(contact.relationship)));
+        tableWidget->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(contact.middleName ? contact.middleName.value() : "")));
+        tableWidget->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(contact.nickName ? contact.nickName.value() : "")));
+        tableWidget->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(contact.relationship ? contact.relationship.value() : "")));
 
         // Convert birthday for display
-        QDate birthDate = QDate(contact.birthDate.tm_year + 1900, contact.birthDate.tm_mon + 1, contact.birthDate.tm_mday);
-        tableWidget->setItem(row, 4, new QTableWidgetItem(birthDate.toString("yyyy-MM-dd")));
+        QDate birthDate;
+        if(contact.birthDate.has_value()) {
+            birthDate = QDate(contact.birthDate->tm_year + 1900, contact.birthDate->tm_mon + 1,
+                              contact.birthDate->tm_mday);
+            tableWidget->setItem(row, 4, new QTableWidgetItem(birthDate.toString("yyyy-MM-dd")));
+        }
+        else {
+            tableWidget->setItem(row, 4, new QTableWidgetItem(""));
+        }
     }
 }
 

@@ -23,16 +23,23 @@ void ViewContactView::setupUi() {
     // Create QLabel for each field in the Contact model
     QLabel *firstNameLabel = new QLabel(QString::fromStdString(contact.firstName), this);
     QLabel *lastNameLabel = new QLabel(QString::fromStdString(contact.lastName), this);
-    QLabel *middleNameLabel = new QLabel(QString::fromStdString(contact.middleName), this);
-    QLabel *nickNameLabel = new QLabel(QString::fromStdString(contact.nickName), this);
-    QLabel *relationshipLabel = new QLabel(QString::fromStdString(contact.relationship), this);
+    QLabel *middleNameLabel = new QLabel(QString::fromStdString(contact.middleName ? contact.middleName.value() : ""), this);
+    QLabel *nickNameLabel = new QLabel(QString::fromStdString(contact.nickName ? contact.middleName.value() : ""), this);
+    QLabel *relationshipLabel = new QLabel(QString::fromStdString(contact.relationship ? contact.relationship.value() : ""), this);
 
-    std::tm birthDate = contact.birthDate;
-    std::stringstream ss;
-    ss << std::put_time(&birthDate, "%m-%d-%Y");
-    std::string birthDateString = ss.str();
+    // Handle birthdate
+    QLabel *birthDateLabel;
 
-    QLabel *birthDateLabel = new QLabel(QString::fromStdString(birthDateString), this);
+    if(contact.birthDate.has_value()) {
+        std::tm birthDate = *contact.birthDate;
+        std::stringstream ss;
+        ss << std::put_time(&birthDate, "%m-%d-%Y");
+        std::string birthDateString = ss.str();
+
+        birthDateLabel = new QLabel(QString::fromStdString(birthDateString), this);
+    } else {
+        birthDateLabel = new QLabel("", this);
+    }
 
     // Create a form layout and add the fields
     QFormLayout *formLayout = new QFormLayout();

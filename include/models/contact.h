@@ -3,18 +3,19 @@
 
 #include <string>
 #include <ctime>
+#include <optional>
 
 class Contact {
 public:
     int id;
     std::string firstName;
     std::string lastName;
-    std::string middleName;
-    std::string nickName;
-    std::string relationship;
-    std::tm birthDate = {};
+    std::optional<std::string> middleName;
+    std::optional<std::string> nickName;
+    std::optional<std::string> relationship;
+    std::optional<std::tm> birthDate = {};
     std::time_t createdAt;
-    std::time_t updatedAt;
+    std::optional<std::time_t> updatedAt;
 
     Contact();
     Contact(int id, const std::string& firstName, const std::string& lastName, const std::string& middleName,
