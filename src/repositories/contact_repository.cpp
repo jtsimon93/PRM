@@ -1,7 +1,7 @@
 #include "contact_repository.h"
 #include <iostream>
 
-ContactRepository::ContactRepository(const std::string& db_path) {
+ContactRepository::ContactRepository(const std::string &db_path) {
     std::cout << "Opening database: " << db_path << "\n";
     db = std::make_shared<sqlite::database>(db_path);
     *db << R"(
@@ -20,33 +20,51 @@ ContactRepository::ContactRepository(const std::string& db_path) {
     std::cout << "Database opened." << std::endl;
 }
 
-int ContactRepository::add(const Contact& contact) {
-    *db << R"(INSERT INTO contacts
+int ContactRepository::add(const Contact &contact) {
+    if(contact.birthDate.has_value()) {
+        *db << R"(INSERT INTO contacts
               (firstName, lastName, middleName, nickName, relationship, birthDate, createdAt, updatedAt)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?);)"
-        << contact.firstName
-        << contact.lastName
-        << contact.middleName
-        << contact.nickName
-        << contact.relationship
-        << (contact.birthDate ? formatDate(*contact.birthDate) : nullptr)
-        << contact.createdAt
-        << contact.updatedAt;
+            << contact.firstName
+            << contact.lastName
+            << contact.middleName
+            << contact.nickName
+            << contact.relationship
+            << (contact.birthDate != std::nullopt ? formatDate(*contact.birthDate) : nullptr)
+            << contact.createdAt
+            << contact.updatedAt;
 
-    int insertedId = db->last_insert_rowid();
-    return insertedId;
+        int insertedId = db->last_insert_rowid();
+        return insertedId;
+    } else {
+        *db << R"(INSERT INTO contacts
+              (firstName, lastName, middleName, nickName, relationship, createdAt, updatedAt)
+              VALUES (?, ?, ?, ?, ?, ?, ?);)"
+            << contact.firstName
+            << contact.lastName
+            << contact.middleName
+            << contact.nickName
+            << contact.relationship
+            << contact.createdAt
+            << contact.updatedAt;
+
+        int insertedId = db->last_insert_rowid();
+        return insertedId;
+    }
+
 }
 
 std::vector<Contact> ContactRepository::getAll() {
     std::vector<Contact> contacts;
     std::cout << "Retrieving all contacts..." << std::endl;
-    *db << "SELECT id, firstName, lastName, middleName, nickName, relationship, birthDate, createdAt, updatedAt FROM contacts;"
-        >> [&](int id, std::string firstName, std::string lastName, std::string middleName,
-               std::string nickName, std::string relationship, std::string birthDate,
-               std::time_t createdAt, std::time_t updatedAt) {
-            contacts.emplace_back(id, firstName, lastName, middleName, nickName, relationship,
-                                  parseDate(birthDate), createdAt, updatedAt);
-        };
+    *db
+            << "SELECT id, firstName, lastName, middleName, nickName, relationship, birthDate, createdAt, updatedAt FROM contacts;"
+            >> [&](int id, std::string firstName, std::string lastName, std::string middleName,
+                   std::string nickName, std::string relationship, std::string birthDate,
+                   std::time_t createdAt, std::time_t updatedAt) {
+                contacts.emplace_back(id, firstName, lastName, middleName, nickName, relationship,
+                                      parseDate(birthDate), createdAt, updatedAt);
+            };
     std::cout << "Contacts retrieved: " << contacts.size() << std::endl;
     return contacts;
 }
@@ -54,19 +72,23 @@ std::vector<Contact> ContactRepository::getAll() {
 Contact ContactRepository::getById(int id) {
     std::cout << "Getting contact by ID: " << id << std::endl;
     Contact contact;
-    *db << "SELECT id, firstName, lastName, middleName, nickName, relationship, birthDate, createdAt, updatedAt FROM contacts WHERE id = ?;"
-        << id
-        >> [&](int id, std::string firstName, std::string lastName, std::string middleName,
-               std::string nickName, std::string relationship, std::string birthDate,
-               std::time_t createdAt, std::time_t updatedAt) {
-            contact = Contact(id, firstName, lastName, middleName, nickName, relationship,
-                              parseDate(birthDate), createdAt, updatedAt);
-        };
+    *db
+            << "SELECT id, firstName, lastName, middleName, nickName, relationship, birthDate, createdAt, updatedAt FROM contacts WHERE id = ?;"
+            << id
+            >> [&](int id, std::string firstName, std::string lastName, std::string middleName,
+                   std::string nickName, std::string relationship, std::string birthDate,
+                   std::time_t createdAt, std::time_t updatedAt) {
+
+                std::optional<std::tm> birthDateOpt = parseDate(birthDate);
+
+                contact = Contact(id, firstName, lastName, middleName, nickName, relationship,
+                                  birthDateOpt, createdAt, updatedAt);
+            };
     std::cout << "Contact retrieved: " << contact.firstName << " " << contact.lastName << std::endl;
     return contact;
 }
 
-void ContactRepository::update(const Contact& contact) {
+void ContactRepository::update(const Contact &contact) {
     std::cout << "Updating contact: " << contact.firstName << " " << contact.lastName << std::endl;
     *db << R"(UPDATE contacts
               SET firstName = ?, lastName = ?, middleName = ?, nickName = ?,
@@ -88,7 +110,8 @@ void ContactRepository::remove(int id) {
     *db << "DELETE FROM contacts WHERE id = ?;" << id;
     std::cout << "Contact removed." << std::endl;
 }
-std::string ContactRepository::formatDate(const std::optional<std::tm>& opt_tm) {
+
+std::string ContactRepository::formatDate(const std::optional<std::tm> &opt_tm) {
     if (opt_tm.has_value()) {
         char buf[80];
         std::strftime(buf, sizeof(buf), "%Y-%m-%d", &(*opt_tm));
@@ -98,14 +121,14 @@ std::string ContactRepository::formatDate(const std::optional<std::tm>& opt_tm) 
     }
 }
 
-std::tm ContactRepository::parseDate(const std::string& date) {
+std::optional<std::tm> ContactRepository::parseDate(const std::string &date) {
     // If the date is null in the DB, return an empty tm struct
     if (date.empty()) {
-        return {};
+        return std::nullopt;
     }
 
     std::tm tm = {};
-    char* result = strptime(date.c_str(), "%Y-%m-%d", &tm);
+    char *result = strptime(date.c_str(), "%Y-%m-%d", &tm);
     if (result == nullptr) {
         throw std::runtime_error("Failed to parse date: " + date);
     }

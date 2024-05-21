@@ -35,6 +35,10 @@ void AddContactView::setupUi() {
     birthDateEdit->setDateRange(QDate(1900, 1, 1), QDate::currentDate());
     birthDateEdit->setDisplayFormat("MM-dd-yyyy");
 
+    // Create QCheckBox for the addBirthDate field
+    addBirthDateCheckBox = new QCheckBox(tr("Add Birth Date"), this);
+    addBirthDateCheckBox->setChecked(true);
+
     // Create QPushButton for the submit button
     submitButton = new QPushButton(tr("Submit"), this);
 
@@ -45,6 +49,7 @@ void AddContactView::setupUi() {
     formLayout->addRow(new QLabel(tr("Nick Name:"), this), nickNameLineEdit);
     formLayout->addRow(new QLabel(tr("Relationship:"), this), relationshipLineEdit);
     formLayout->addRow(new QLabel(tr("Birth Date:"), this), birthDateEdit);
+    formLayout->addRow(new QLabel(tr("Add Birth Date?"), this), addBirthDateCheckBox);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
@@ -68,14 +73,20 @@ void AddContactView::onSubmitButtonClicked() {
     contact.nickName = nickNameLineEdit->text().toStdString();
     contact.relationship = relationshipLineEdit->text().toStdString();
 
-    // Convert QDate to std::tm
-    QDate birthDate = birthDateEdit->date();
-    std::tm tm = {};
-    tm.tm_year = birthDate.year() - 1900;  // years since 1900
-    tm.tm_mon = birthDate.month() - 1;     // months since January [0-11]
-    tm.tm_mday = birthDate.day();          // day of the month [1-31]
+    if(addBirthDateCheckBox->isChecked()) {
+        // Convert QDate to std::tm
+        QDate birthDate = birthDateEdit->date();
+        std::tm tm = {};
+        tm.tm_year = birthDate.year() - 1900;  // years since 1900
+        tm.tm_mon = birthDate.month() - 1;     // months since January [0-11]
+        tm.tm_mday = birthDate.day();          // day of the month [1-31]
 
-    contact.birthDate = tm;
+        contact.birthDate = tm;
+    }
+    else {
+        contact.birthDate = std::nullopt;
+    }
+
 
     int insertedContactId = 0;
     insertedContactId = contactService->addContact(contact);
