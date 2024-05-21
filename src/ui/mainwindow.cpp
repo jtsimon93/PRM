@@ -21,6 +21,10 @@ MainWindow::MainWindow(QWidget *parent)
         viewContactView = new ViewContactView(contactId, nullptr);
         showView(viewContactView);
     });
+    connect(contactListView, &ContactListView::contactDoubleClicked, [this](int contactId) {
+      viewContactView = new ViewContactView(contactId, nullptr);
+      showView(viewContactView);
+    });
 }
 
 MainWindow::~MainWindow() {

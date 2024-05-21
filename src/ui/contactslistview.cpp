@@ -25,11 +25,14 @@ void ContactListView::setupUi() {
     tableWidget->setHorizontalHeaderLabels(QStringList() << tr("First Name") << tr("Last Name") << tr("Middle Name") << tr("Nick Name") << tr("Birth Day") << tr("Relationship"));
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
     layout->addWidget(tableWidget);
     setLayout(layout);
+
+    connect(tableWidget, &QTableWidget::itemDoubleClicked, this, &ContactListView::onItemDoubleClicked);
 }
 
 void ContactListView::populateTable() {
@@ -48,6 +51,9 @@ void ContactListView::populateTable() {
         tableWidget->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(contact.middleName ? contact.middleName.value() : "")));
         tableWidget->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(contact.nickName ? contact.nickName.value() : "")));
         tableWidget->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(contact.relationship ? contact.relationship.value() : "")));
+
+        // Store the contact ID in the first column
+        tableWidget->item(row, 0)->setData(Qt::UserRole, contact.id);
 
         // Convert birthday for display
         QDate birthDate;
@@ -69,4 +75,10 @@ void ContactListView::refreshData() {
 
     // Repopulate the table
     populateTable();
+}
+
+void ContactListView::onItemDoubleClicked(QTableWidgetItem *item) {
+    int row = item->row();
+    int contactId = tableWidget->item(row, 0)->data(Qt::UserRole).toInt();
+    emit contactDoubleClicked(contactId);
 }
