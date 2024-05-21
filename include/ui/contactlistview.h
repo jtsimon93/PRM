@@ -15,9 +15,13 @@ public:
 public slots:
     void refreshData();
 
+signals:
+    void contactDoubleClicked(int contactId);
+
 private:
     void setupUi();
     void populateTable(); // Declare populateTable method
+    void onItemDoubleClicked(QTableWidgetItem* item);
 
     QLabel *titleLabel;
     QTableWidget *tableWidget; // Add QTableWidget member
