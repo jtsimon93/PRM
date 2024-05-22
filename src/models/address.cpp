@@ -20,6 +20,3 @@ Address::Address(int id, int contactId, const std::string &streetAddress1,
                                                                                 updatedAt(updatedAt) {
 
 }
-
-{
-}
