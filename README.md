@@ -7,8 +7,7 @@ All data is stored locally on your machine and is not shared with anyone.
 PRM is in the beginning stages of active development. If you would like to contribute, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
 ## Features
-- [x] View list of contacts
-- [x] Add new contacts
+- [x] View list of contacts, add, and view single contacts
 
 ## Planned Features
 - [ ] Complete Contact Management
