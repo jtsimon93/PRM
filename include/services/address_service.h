@@ -16,6 +16,9 @@ public:
     std::vector<Address> getAddressesByContactId(int contactId) override;
     void updateAddress(const Address& address) override;
     void removeAddress(int id) override;
+
+private:
+    std::shared_ptr<IAddressRepository> repository;
 };
 
 #endif // PRM_ADDRESS_SERVICE_H
