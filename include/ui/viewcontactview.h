@@ -3,6 +3,7 @@
 
 #include "baseview.h"
 #include "icontact_service.h"
+#include "iaddress_service.h"
 #include <QLabel>
 #include <QVBoxLayout>
 
@@ -21,6 +22,7 @@ private:
 
 
     std::shared_ptr<IContactService> contactService;
+    std::shared_ptr<IAddressService> addressService;
 };
 
 #endif //  VIEWCONTACTVIEW_H
