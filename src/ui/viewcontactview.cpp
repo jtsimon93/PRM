@@ -18,6 +18,9 @@ void ViewContactView::setupUi() {
     titleFont.setPointSize(16);
     titleLabel->setFont(titleFont);
 
+    QFont subTitleFont;
+    subTitleFont.setPointSize(14);
+
     // Retrieve the contact details
     Contact contact = contactService->getContactById(contactId);
 
@@ -55,6 +58,8 @@ void ViewContactView::setupUi() {
     std::vector<Address> addresses = addressService->getAddressesByContactId(contactId);
 
     // Create a container for the addresses
+    QLabel *addressLabel = new QLabel(tr("Addresses"), this);
+    addressLabel->setFont(subTitleFont);
     QWidget *addressesContainer = new QWidget(this);
     QVBoxLayout *addressesLayout = new QVBoxLayout(addressesContainer);
     addressesLayout->setContentsMargins(0,0,0,0);
@@ -95,6 +100,7 @@ void ViewContactView::setupUi() {
     layout->addLayout(contactFormLayout);
 
     // Add addresses container to the main layout
+    layout->addWidget(addressLabel);
     layout->addWidget(addressesContainer);
 
     layout->addStretch(1);
