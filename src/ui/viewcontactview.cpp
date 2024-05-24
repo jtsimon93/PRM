@@ -1,4 +1,5 @@
 #include <QFormLayout>
+#include <QPushButton>
 #include "services/contact_service.h"
 #include "ui/viewcontactview.h"
 #include "singleton_injector.h"
@@ -20,6 +21,9 @@ void ViewContactView::setupUi() {
 
     QFont subTitleFont;
     subTitleFont.setPointSize(14);
+
+    QFont boldFont;
+    boldFont.setBold(true);
 
     // Retrieve the contact details
     Contact contact = contactService->getContactById(contactId);
@@ -61,35 +65,67 @@ void ViewContactView::setupUi() {
     QLabel *addressLabel = new QLabel(tr("Addresses"), this);
     addressLabel->setFont(subTitleFont);
     QWidget *addressesContainer = new QWidget(this);
-    QVBoxLayout *addressesLayout = new QVBoxLayout(addressesContainer);
-    addressesLayout->setContentsMargins(0,0,0,0);
+    QGridLayout *addressesLayout = new QGridLayout(addressesContainer);
 
-    // If there are addresses, add them to the addressesLayout
-    if(!addresses.empty()) {
-        for(const Address& address : addresses) {
+    if (!addresses.empty()) {
+        int row = 0;
+
+        // Add headers
+        QLabel *header1 = new QLabel(tr("Street Address 1"), this);
+        header1->setFont(boldFont);
+        QLabel *header2 = new QLabel(tr("Street Address 2"), this);
+        header2->setFont(boldFont);
+        QLabel *header3 = new QLabel(tr("City"), this);
+        header3->setFont(boldFont);
+        QLabel *header4 = new QLabel(tr("State"), this);
+        header4->setFont(boldFont);
+        QLabel *header5 = new QLabel(tr("Zip"), this);
+        header5->setFont(boldFont);
+        QLabel *headerEdit = new QLabel(tr("Edit"), this);
+        headerEdit->setFont(boldFont);
+        QLabel *headerDelete = new QLabel(tr("Delete"), this);
+        headerDelete->setFont(boldFont);
+
+        addressesLayout->addWidget(header1, row, 0);
+        addressesLayout->addWidget(header2, row, 1);
+        addressesLayout->addWidget(header3, row, 2);
+        addressesLayout->addWidget(header4, row, 3);
+        addressesLayout->addWidget(header5, row, 4);
+        addressesLayout->addWidget(headerEdit, row, 5);
+        addressesLayout->addWidget(headerDelete, row, 6);
+
+        row++;
+
+        for (const Address& address : addresses) {
             QLabel *streetAddress1Label = new QLabel(QString::fromStdString(address.streetAddress1), this);
             QLabel *streetAddress2Label = new QLabel(QString::fromStdString(address.streetAddress2 ? address.streetAddress2.value() : ""), this);
             QLabel *cityLabel = new QLabel(QString::fromStdString(address.city ? address.city.value() : ""), this);
             QLabel *stateLabel = new QLabel(QString::fromStdString(address.state ? address.state.value() : ""), this);
             QLabel *zipLabel = new QLabel(QString::fromStdString(address.zip ? address.zip.value() : ""), this);
 
-            QFormLayout *addressFormLayout = new QFormLayout();
-            addressFormLayout->setContentsMargins(0,0,0,0);
-            addressFormLayout->addRow(tr("Street Address 1:"), streetAddress1Label);
-            addressFormLayout->addRow(tr("Street Address 2:"), streetAddress2Label);
-            addressFormLayout->addRow(tr("City:"), cityLabel);
-            addressFormLayout->addRow(tr("State:"), stateLabel);
-            addressFormLayout->addRow(tr("Zip:"), zipLabel);
+            QPushButton *editButton = new QPushButton(tr("Edit"), this);
+            QPushButton *deleteButton = new QPushButton(tr("Delete"), this);
 
-            QWidget *addressContainer = new QWidget(this);
-            addressContainer->setLayout(addressFormLayout);
-            addressesLayout->addWidget(addressContainer);
+            // Connect the buttons to appropriate slots
+            // connect(editButton, &QPushButton::clicked, this, &YourClass::editAddress);
+            // connect(deleteButton, &QPushButton::clicked, this, &YourClass::deleteAddress);
+
+            addressesLayout->addWidget(streetAddress1Label, row, 0);
+            addressesLayout->addWidget(streetAddress2Label, row, 1);
+            addressesLayout->addWidget(cityLabel, row, 2);
+            addressesLayout->addWidget(stateLabel, row, 3);
+            addressesLayout->addWidget(zipLabel, row, 4);
+            addressesLayout->addWidget(editButton, row, 5);
+            addressesLayout->addWidget(deleteButton, row, 6);
+
+            row++;
         }
     } else {
         QLabel *noAddressesLabel = new QLabel(tr("No addresses found for this contact."), this);
-        addressesLayout->addWidget(noAddressesLabel);
-
+        addressesLayout->addWidget(noAddressesLabel, 0, 0);
     }
+
+
 
 
     // Layout for the contact view
