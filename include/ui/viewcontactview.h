@@ -6,6 +6,8 @@
 #include "iaddress_service.h"
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QGridLayout>
+#include <memory>
 
 class ViewContactView : public BaseView {
 Q_OBJECT
@@ -16,7 +18,7 @@ public:
 private:
     void setupUi();
     void setupTitle(QVBoxLayout *mainLayout);
-    void setupContactForm(QVBoxLayout *mainLayout);
+    void setupContactInformation(QVBoxLayout *mainLayout);
     void setupAddresses(QVBoxLayout *mainLayout);
 
     QLabel *titleLabel;

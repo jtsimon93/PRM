@@ -3,18 +3,22 @@
 #include "services/contact_service.h"
 #include "ui/viewcontactview.h"
 #include "singleton_injector.h"
+#include <sstream>
+#include <iomanip>
 
 ViewContactView::ViewContactView(int contactId, QWidget *parent)
-        : BaseView(parent), contactService(SingletonInjector::getInjector().create<std::shared_ptr<IContactService>>()),
-          addressService(SingletonInjector::getInjector().create<std::shared_ptr<IAddressService>>()) {
-    this->contactId = contactId;
+        : BaseView(parent),
+          contactService(SingletonInjector::getInjector().create<std::shared_ptr<IContactService>>()),
+          addressService(SingletonInjector::getInjector().create<std::shared_ptr<IAddressService>>()),
+          contactId(contactId) {
     setupUi();
 }
 
 void ViewContactView::setupUi() {
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    auto *layout = new QVBoxLayout(this);
     setupTitle(layout);
-    setupContactForm(layout);
+    setupContactInformation(layout);
+    layout->addSpacing(20);
     setupAddresses(layout);
     layout->addStretch(1);
     setLayout(layout);
@@ -31,42 +35,68 @@ void ViewContactView::setupTitle(QVBoxLayout *mainLayout) {
     mainLayout->addWidget(titleLabel);
 }
 
-void ViewContactView::setupContactForm(QVBoxLayout *mainLayout) {
+void ViewContactView::setupContactInformation(QVBoxLayout * mainLayout) {
     QFont subTitleFont;
     subTitleFont.setPointSize(14);
 
     // Retrieve the contact details
-    Contact contact = contactService->getContactById(contactId);
+    const Contact contact = contactService->getContactById(contactId);
+
+    // Bold font
+    QFont boldFont;
+    boldFont.setBold(true);
 
     // Create QLabel for each field in the Contact model
-    QLabel *firstNameLabel = new QLabel(QString::fromStdString(contact.firstName), this);
-    QLabel *lastNameLabel = new QLabel(QString::fromStdString(contact.lastName), this);
-    QLabel *middleNameLabel = new QLabel(QString::fromStdString(contact.middleName ? contact.middleName.value() : ""), this);
-    QLabel *nickNameLabel = new QLabel(QString::fromStdString(contact.nickName ? contact.nickName.value() : ""), this);
-    QLabel *relationshipLabel = new QLabel(QString::fromStdString(contact.relationship ? contact.relationship.value() : ""), this);
+    auto *contactFirstNameLabel = new QLabel(QString::fromStdString(contact.firstName), this);
+    auto *contactLastNameLabel = new QLabel(QString::fromStdString(contact.lastName), this);
+    auto *contactMiddleNameLabel = new QLabel(QString::fromStdString(contact.middleName ? contact.middleName.value() : ""), this);
+    auto *contactNickNameLabel = new QLabel(QString::fromStdString(contact.nickName ? contact.nickName.value() : ""), this);
+    auto *contactRelationshipLabel = new QLabel(QString::fromStdString(contact.relationship ? contact.relationship.value() : ""), this);
 
     // Handle birthdate
-    QLabel *birthDateLabel;
-    if(contact.birthDate.has_value()) {
-        std::tm birthDate = *contact.birthDate;
+    QLabel *contactBirthDateLabel;
+    if (contact.birthDate.has_value()) {
+        const std::tm birthDate = *contact.birthDate;
         std::stringstream ss;
         ss << std::put_time(&birthDate, "%m-%d-%Y");
-        std::string birthDateString = ss.str();
-        birthDateLabel = new QLabel(QString::fromStdString(birthDateString), this);
+        const std::string birthDateString = ss.str();
+        contactBirthDateLabel = new QLabel(QString::fromStdString(birthDateString), this);
     } else {
-        birthDateLabel = new QLabel("", this);
+        contactBirthDateLabel = new QLabel("", this);
     }
 
-    // Create a form layout and add the fields
-    QFormLayout *contactFormLayout = new QFormLayout();
-    contactFormLayout->addRow(tr("First Name:"), firstNameLabel);
-    contactFormLayout->addRow(tr("Last Name:"), lastNameLabel);
-    contactFormLayout->addRow(tr("Middle Name:"), middleNameLabel);
-    contactFormLayout->addRow(tr("Nick Name:"), nickNameLabel);
-    contactFormLayout->addRow(tr("Relationship:"), relationshipLabel);
-    contactFormLayout->addRow(tr("Birth Date:"), birthDateLabel);
+    // Create labels for the columns
+    auto *firstNameLabel = new QLabel(tr("First Name:"));
+    auto *lastNameLabel = new QLabel(tr("Last Name:"));
+    auto *middleNameLabel = new QLabel(tr("Middle Name:"));
+    auto *nickNameLabel = new QLabel(tr("Nick Name:"));
+    auto *relationshipLabel = new QLabel(tr("Relationship:"));
+    auto *birthDateLabel = new QLabel(tr("Birthday"));
 
-    mainLayout->addLayout(contactFormLayout);
+    // Set the font for the labels
+    firstNameLabel->setFont(boldFont);
+    lastNameLabel->setFont(boldFont);
+    middleNameLabel->setFont(boldFont);
+    nickNameLabel->setFont(boldFont);
+    relationshipLabel->setFont(boldFont);
+    birthDateLabel->setFont(boldFont);
+
+    // Create a grid layout and add the fields
+    auto *contactGridLayout = new QGridLayout();
+    contactGridLayout->addWidget(firstNameLabel, 0, 0);
+    contactGridLayout->addWidget(contactFirstNameLabel, 0, 1);
+    contactGridLayout->addWidget(lastNameLabel, 0, 2);
+    contactGridLayout->addWidget(contactLastNameLabel, 0, 3);
+    contactGridLayout->addWidget(middleNameLabel, 1, 0);
+    contactGridLayout->addWidget(contactMiddleNameLabel, 1, 1);
+    contactGridLayout->addWidget(nickNameLabel, 1, 2);
+    contactGridLayout->addWidget(contactNickNameLabel, 1, 3);
+    contactGridLayout->addWidget(relationshipLabel, 2, 0);
+    contactGridLayout->addWidget(contactRelationshipLabel, 2, 1);
+    contactGridLayout->addWidget(birthDateLabel, 2, 2);
+    contactGridLayout->addWidget(contactBirthDateLabel, 2, 3);
+
+    mainLayout->addLayout(contactGridLayout);
 }
 
 void ViewContactView::setupAddresses(QVBoxLayout *mainLayout) {
@@ -74,13 +104,13 @@ void ViewContactView::setupAddresses(QVBoxLayout *mainLayout) {
     subTitleFont.setPointSize(14);
 
     // Get the addresses for the contact
-    std::vector<Address> addresses = addressService->getAddressesByContactId(contactId);
+    const std::vector<Address> addresses = addressService->getAddressesByContactId(contactId);
 
     // Create a container for the addresses
-    QLabel *addressLabel = new QLabel(tr("Addresses"), this);
+    auto *addressLabel = new QLabel(tr("Addresses"), this);
     addressLabel->setFont(subTitleFont);
-    QWidget *addressesContainer = new QWidget(this);
-    QGridLayout *addressesLayout = new QGridLayout(addressesContainer);
+    auto *addressesContainer = new QWidget(this);
+    auto *addressesLayout = new QGridLayout(addressesContainer);
 
     QFont boldFont;
     boldFont.setBold(true);
@@ -89,19 +119,19 @@ void ViewContactView::setupAddresses(QVBoxLayout *mainLayout) {
         int row = 0;
 
         // Add headers
-        QLabel *header1 = new QLabel(tr("Street Address 1"), this);
+        auto *header1 = new QLabel(tr("Street Address 1"), this);
         header1->setFont(boldFont);
-        QLabel *header2 = new QLabel(tr("Street Address 2"), this);
+        auto *header2 = new QLabel(tr("Street Address 2"), this);
         header2->setFont(boldFont);
-        QLabel *header3 = new QLabel(tr("City"), this);
+        auto *header3 = new QLabel(tr("City"), this);
         header3->setFont(boldFont);
-        QLabel *header4 = new QLabel(tr("State"), this);
+        auto *header4 = new QLabel(tr("State"), this);
         header4->setFont(boldFont);
-        QLabel *header5 = new QLabel(tr("Zip"), this);
+        auto *header5 = new QLabel(tr("Zip"), this);
         header5->setFont(boldFont);
-        QLabel *headerEdit = new QLabel(tr("Edit"), this);
+        auto *headerEdit = new QLabel(tr("Edit"), this);
         headerEdit->setFont(boldFont);
-        QLabel *headerDelete = new QLabel(tr("Delete"), this);
+        auto *headerDelete = new QLabel(tr("Delete"), this);
         headerDelete->setFont(boldFont);
 
         addressesLayout->addWidget(header1, row, 0);
@@ -115,18 +145,16 @@ void ViewContactView::setupAddresses(QVBoxLayout *mainLayout) {
         row++;
 
         for (const Address& address : addresses) {
-            QLabel *streetAddress1Label = new QLabel(QString::fromStdString(address.streetAddress1), this);
-            QLabel *streetAddress2Label = new QLabel(QString::fromStdString(address.streetAddress2 ? address.streetAddress2.value() : ""), this);
-            QLabel *cityLabel = new QLabel(QString::fromStdString(address.city ? address.city.value() : ""), this);
-            QLabel *stateLabel = new QLabel(QString::fromStdString(address.state ? address.state.value() : ""), this);
-            QLabel *zipLabel = new QLabel(QString::fromStdString(address.zip ? address.zip.value() : ""), this);
+            auto *streetAddress1Label = new QLabel(QString::fromStdString(address.streetAddress1), this);
+            auto *streetAddress2Label = new QLabel(QString::fromStdString(address.streetAddress2 ? address.streetAddress2.value() : ""), this);
+            auto *cityLabel = new QLabel(QString::fromStdString(address.city ? address.city.value() : ""), this);
+            auto *stateLabel = new QLabel(QString::fromStdString(address.state ? address.state.value() : ""), this);
+            auto *zipLabel = new QLabel(QString::fromStdString(address.zip ? address.zip.value() : ""), this);
 
-            QPushButton *editButton = new QPushButton(tr("Edit"), this);
-            QPushButton *deleteButton = new QPushButton(tr("Delete"), this);
+            auto *editButton = new QPushButton(tr("Edit"), this);
+            auto *deleteButton = new QPushButton(tr("Delete"), this);
 
-            // Connect the buttons to appropriate slots
-            // connect(editButton, &QPushButton::clicked, this, &YourClass::editAddress);
-            // connect(deleteButton, &QPushButton::clicked, this, &YourClass::deleteAddress);
+            // TODO: Connect edit and delete buttons
 
             addressesLayout->addWidget(streetAddress1Label, row, 0);
             addressesLayout->addWidget(streetAddress2Label, row, 1);
@@ -139,7 +167,7 @@ void ViewContactView::setupAddresses(QVBoxLayout *mainLayout) {
             row++;
         }
     } else {
-        QLabel *noAddressesLabel = new QLabel(tr("No addresses found for this contact."), this);
+        auto *noAddressesLabel = new QLabel(tr("No addresses found for this contact."), this);
         addressesLayout->addWidget(noAddressesLabel, 0, 0);
     }
 
