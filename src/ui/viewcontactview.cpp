@@ -12,6 +12,15 @@ ViewContactView::ViewContactView(int contactId, QWidget *parent)
 }
 
 void ViewContactView::setupUi() {
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    setupTitle(layout);
+    setupContactForm(layout);
+    setupAddresses(layout);
+    layout->addStretch(1);
+    setLayout(layout);
+}
+
+void ViewContactView::setupTitle(QVBoxLayout *mainLayout) {
     titleLabel = new QLabel(tr("View Contact"), this);
     titleLabel->setAlignment(Qt::AlignLeft);
 
@@ -19,11 +28,12 @@ void ViewContactView::setupUi() {
     titleFont.setPointSize(16);
     titleLabel->setFont(titleFont);
 
+    mainLayout->addWidget(titleLabel);
+}
+
+void ViewContactView::setupContactForm(QVBoxLayout *mainLayout) {
     QFont subTitleFont;
     subTitleFont.setPointSize(14);
-
-    QFont boldFont;
-    boldFont.setBold(true);
 
     // Retrieve the contact details
     Contact contact = contactService->getContactById(contactId);
@@ -37,13 +47,11 @@ void ViewContactView::setupUi() {
 
     // Handle birthdate
     QLabel *birthDateLabel;
-
     if(contact.birthDate.has_value()) {
         std::tm birthDate = *contact.birthDate;
         std::stringstream ss;
         ss << std::put_time(&birthDate, "%m-%d-%Y");
         std::string birthDateString = ss.str();
-
         birthDateLabel = new QLabel(QString::fromStdString(birthDateString), this);
     } else {
         birthDateLabel = new QLabel("", this);
@@ -58,6 +66,13 @@ void ViewContactView::setupUi() {
     contactFormLayout->addRow(tr("Relationship:"), relationshipLabel);
     contactFormLayout->addRow(tr("Birth Date:"), birthDateLabel);
 
+    mainLayout->addLayout(contactFormLayout);
+}
+
+void ViewContactView::setupAddresses(QVBoxLayout *mainLayout) {
+    QFont subTitleFont;
+    subTitleFont.setPointSize(14);
+
     // Get the addresses for the contact
     std::vector<Address> addresses = addressService->getAddressesByContactId(contactId);
 
@@ -66,6 +81,9 @@ void ViewContactView::setupUi() {
     addressLabel->setFont(subTitleFont);
     QWidget *addressesContainer = new QWidget(this);
     QGridLayout *addressesLayout = new QGridLayout(addressesContainer);
+
+    QFont boldFont;
+    boldFont.setBold(true);
 
     if (!addresses.empty()) {
         int row = 0;
@@ -125,20 +143,6 @@ void ViewContactView::setupUi() {
         addressesLayout->addWidget(noAddressesLabel, 0, 0);
     }
 
-
-
-
-    // Layout for the contact view
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(titleLabel);
-
-    // Add contact form layout to the main layout
-    layout->addLayout(contactFormLayout);
-
-    // Add addresses container to the main layout
-    layout->addWidget(addressLabel);
-    layout->addWidget(addressesContainer);
-
-    layout->addStretch(1);
-    setLayout(layout);
+    mainLayout->addWidget(addressLabel);
+    mainLayout->addWidget(addressesContainer);
 }

@@ -13,13 +13,14 @@ Q_OBJECT
 public:
     explicit ViewContactView(int contactId, QWidget *parent = nullptr);
 
-
 private:
     void setupUi();
+    void setupTitle(QVBoxLayout *mainLayout);
+    void setupContactForm(QVBoxLayout *mainLayout);
+    void setupAddresses(QVBoxLayout *mainLayout);
 
     QLabel *titleLabel;
     int contactId;
-
 
     std::shared_ptr<IContactService> contactService;
     std::shared_ptr<IAddressService> addressService;
